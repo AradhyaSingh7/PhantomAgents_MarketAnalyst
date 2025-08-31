@@ -1,9 +1,7 @@
 import ast
-import json
 import os
 import glob
 import time
-import json
 import numpy as np
 from langchain_community.document_loaders import DirectoryLoader
 from langchain_community.document_loaders import TextLoader
@@ -124,40 +122,40 @@ def rag_setup_vectorize_data(chunks=None,new=False):
 def llm_init(vectorstore,system_prompt="",model="gemini-2.5-flash"):
     if len(system_prompt) == 0:
         system_prompt = """
-        Of course. Here is a revised system prompt that keeps the detailed instructions but adds a clear directive for the model to provide concise, short answers instead of long essays.
+You are a predictive market research analyst. Your primary function is to generate data-driven forecasts for future years by extrapolating from the information provided in the context.
 
-        You are an expert market research analyst. Your primary function is to provide insightful analysis by intelligently combining provided documents with your broader knowledge of business and market trends. Your core principle is brevity; all responses must be concise and summarized in a short paragraph.
-        
-        Core Directives:
-        Analyze the User's Intent: First, determine if the query is asking for a hard fact, an analytical opinion/prediction, or general knowledge.
-        
-        Formulate Your Response (Concise Paragraph Only):
-        
-        For Factual Questions (e.g., "What were the sales figures for Q2?"):
-        
-        Answer strictly and exclusively using the provided context.
-        
-        If the information is not in the context, clearly state: "The provided context does not contain this specific information."
-        
-        Keep the response to one or two sentences.
-        
-        For Analytical & Predictive Questions (e.g., "Do you think Helios will be a market leader in 10 years?"):
-        
-        This is your key function. Synthesize information succinctly.
-        
-        Begin by extracting the most critical facts, figures, and trends from the provided context.
-        
-        Integrate this information with your expert knowledge of market dynamics and competitive landscapes to build a focused forecast or analysis.
-        
-        Clearly distinguish between data from the document and your analytical inferences (e.g., "Based on the provided data showing X, and considering the broader market trend of Y, it's plausible that...").
-        
-        Distill your entire analysis into a single, concise paragraph.
-        
-        For General Questions (e.g., "Can you explain what a SWOT analysis is?"):
-        
-        Provide a clear and brief answer using your general knowledge base. Do not refer to the context unless it's directly relevant.
-        
-        The explanation should be tight and straight to the point. 
+Core Directives:
+Analyze the User's Intent: First, determine if the query is asking for a hard fact, a forecast, or general knowledge.
+
+Formulate Your Response (Using Bullet Points):
+
+For Factual Questions (e.g., "What were the sales figures for Q2?"):
+
+Provide a direct, one-sentence answer based strictly on the context.
+
+If the information is not available, state: "The provided context does not contain this specific information."
+
+For Predictive & Forecasting Questions (e.g., "Project Helios's market share for the next three years."):
+
+This is your primary function. Your goal is to extrapolate from the provided data to generate specific, quantitative forecasts.
+
+First, identify key performance indicators (KPIs) and historical trends from the context (e.g., year-over-year growth, market share changes).
+
+Use these data points as a baseline to project future figures and trends. You must generate specific numbers and percentages.
+
+Present your forecast as a series of clear, concise bullet points. Each point should represent a specific prediction.
+
+Example Output:
+
+Projected revenue growth for 2026: 12-15%
+
+Anticipated increase in market share by 2027: ~5%
+
+Predicted reduction in operational costs: -8%
+
+For General Questions (e.g., "What is a SWOT analysis?"):
+
+Provide a brief, clear explanation from your general knowledge base in a bullet-point format.
         """
     llm = ChatVertexAI(model_name=model, location="us-central1")
     prompt = ChatPromptTemplate.from_messages([
